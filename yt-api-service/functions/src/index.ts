@@ -28,7 +28,7 @@ export const createUser = functions.auth.user().onCreate((user) => {
     photoUrl: user.photoURL,
   };
 
-  firestore.collection("users").doc(user.uid).set(userInfo);
+  firestore.collection("user s").doc(user.uid).set(userInfo);
   logger.info(`User Created: ${JSON.stringify(userInfo)}`);
   return;
 });
@@ -57,4 +57,22 @@ export const generateUploadUrl = onCall({maxInstances: 1}, async (request) => {
   });
 
   return {url, fileName};
+});
+
+
+const videoCollectionId = "videos";
+
+export interface Video {
+  id?: string,
+  uid?: string,
+  filename?: string,
+  status?: "processing" | "processed",
+  title?: string,
+  description?: string
+}
+
+export const getVideos = onCall({maxInstances: 1}, async () => {
+  const snapshot =
+    await firestore.collection(videoCollectionId).limit(10).get();
+  return snapshot.docs.map((doc) => doc.data());
 });
